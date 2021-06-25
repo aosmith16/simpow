@@ -16,20 +16,18 @@
 #' @param keep_data Logical. Whether you want to keep the simulated datasets that are used in the power analysis. Defaults to `FALSE`. It may be useful to keep the datasets if you'd like to do additional exploration of the simulated results but this may make output very large.
 #' @param keep_models Logical. Whether you want to keep the models fit to each simulated datasets for the power analysis. Defaults to `FALSE`. It may be useful to keep the models if you'd like to do additional exploration of the models but this may make output very large.
 #'
-#' @return The printed output contains information on the simulation and power analysis. The object contains a list containing information on the simulation details, design details and true parameters and, when `test = "overall"`, estimated power based on the sample size. These can be extracted from the object by name but vary depending on chosen options.
-#'
-#' \itemize{
-#'   \item nsim - Number of simulations done.
-#'   \item ntrt - Number of treatment groups.
-#'   \item nblock - Number of blocks in study.
-#'   \item nrep - Number of replications of each treatment group in each block.
-#'   \item truemeans - Named vector of true treatment means used in simulation.
-#'   \item truesd - List containing true block and observatin-level (residual) standard deviations used in simulation.
-#'   \item data - If `keep_data = TRUE`, the simulated datasets used in the analysis. May be very large.
-#'   \item power - Estimated number of p-values less than alpha, expressed as a percentage.
-#'   \item alpha - Alpha used for power analysis.
-#'   \item p.values - P-values from test for every model.
-#'   \item models - If `keep_models = TRUE`, the fitted models for every simulated dataset. Maybe be very large.
+#' @return The printed output contains information on the simulation and power analysis. The object contains a list containing information on the simulation details, design details and true parameters and, when `test = "overall"`, estimated power based on the sample size. These can be extracted from the object by name but vary depending on chosen options.\tabular{ll}{
+#'   \code{nsim} \tab Number of simulations done. \cr
+#'   \code{ntrt} \tab Number of treatment groups. \cr
+#'   \code{nblock} \tab Number of blocks in study. \cr
+#'   \code{nrep} \tab Number of replications of each treatment group in each block. \cr
+#'   \code{truemeans} \tab Named vector of true treatment means used in simulation. \cr
+#'   \code{truesd} \tab List containing true block and observation-level (residual) standard deviations used in simulation. \cr
+#'   \code{data} \tab If \code{keep_data = TRUE}, the simulated datasets used in the analysis. May be very large. \cr
+#'   \code{power} \tab Estimated number of p-values less than alpha, expressed as a percentage. \cr
+#'   \code{alpha} \tab Alpha used for power analysis. \cr
+#'   \code{p.values} \tab P-values from test for every model. \cr
+#'   \code{models} \tab If \code{keep_models = TRUE}, the fitted models for every simulated dataset. May be very large.\cr
 #' }
 #' @export
 #'
@@ -38,24 +36,33 @@
 #' # There is one replicate of each treatment in each of 10 blocks.
 #' # Note the single residual SD.
 #' simpow_lmm_f(nsim = 100,
-#'              trtmeans = c(1, 25),
+#'              trtmeans = c(1, 4),
 #'              nblock = 10,
 #'              sd_block = 2,
 #'              sd_resid = 4)
 #'
+#'
 #' # Allow variances to differ among treatments
 #' simpow_lmm_f(nsim = 100,
-#'              trtmeans = c(1, 25),
+#'              trtmeans = c(1, 4),
 #'              nblock = 10,
 #'              sd_block = 2,
 #'              sd_resid = c(1, 20),
-#'              sd_eq = FALSE
+#'              sd_eq = FALSE)
+#'
+#' # Change the number of treatment groups
+#' simpow_lmm_f(nsim = 100,
+#'              ntrt = 3,
+#'              trtmeans = c(1, 3, 4),
+#'              nblock = 10,
+#'              sd_block = 2,
+#'              sd_resid = 4)
 #'
 #'  # Return simulated dataset for a single simulation
 #'  # Here don't run power analysis via test = "none"
 #' results = simpow_lmm_f(nsim = 1,
 #'              test = "none",
-#'              trtmeans = c(1, 25),
+#'              trtmeans = c(1, 4),
 #'              nblock = 10,
 #'              sd_block = 2,
 #'              sd_resid = 4,
@@ -92,10 +99,10 @@ simpow_lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
              "Check that the number of names in trtnames matches the value you put in ntrt.")
     }
 
-    if(!sd_eq & length(sd_resid != ntrt)) {
+    if(!sd_eq & length(sd_resid) != ntrt) {
         stop(call. = FALSE,
              "You are allowing nonconstant variance among treatments.\n",
-             "Please provide a residual SD for every treatment group in sd_resid.")
+             "Please provide a residual SD for each treatment group in sd_resid but no more.")
     }
 
 
