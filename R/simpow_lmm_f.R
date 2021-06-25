@@ -2,7 +2,7 @@
 #'
 #'Simulate data and perform a power analysis based on provided study design details and values for parameters. Data must be balanced. Models are fit with `nlme::lme()`can contain a single categorical fixed effect and a single random effect. Variances can be allowed to vary among the fixed effect. categories. The categorical fixed effect is referred to as "treatment" and the random effect is called "block".
 #'
-#' @param nsim Numeric. The number of simulations to run. Defaults to 1, which is useful if you are testing your approach. Otherwise you'll want to use a large number, such as 1000.
+#' @param nsim Numeric. The number of simulations to run. Defaults to 1, which is useful if you are testing what the datasets look like or how long each analysis takes to run. Otherwise for the full power analysis you'll want to use a large number, such as 1000. Note that the more simulations you do the longer it will take to finish.
 #' @param test Character. Can currently take "none" or "overall"; defaults to "overall". Use "none" if you only want simulated datasets. Use "overall" to do power analysis on overall F test of fixed effect.
 #' @param alpha Numeric. The alpha value you want to test against. Defaults to 0.05.
 #' @param ntrt Numeric. The number of categories or "treatments" that your categorical fixed effect will have. Defaults to 2. Value must be greater than 1.
@@ -11,12 +11,26 @@
 #' @param nrep Numeric. Number of replicates within each treatment within each block. Defaults to 1.
 #' @param nblock Numeric. Total number of blocks, where each treatment is replicated at least one time (based on `nrep`) in each block. Defaults to 5. Must be greater than 2.
 #' @param sd_block Numeric. The true standard deviation based on the among-block variation. The standard deviation is the square root of the variance.
-#' @param sd_resid Numeric. The true standard deviation of the errors, which you may refer to as the residual standard deviation. The standard deviation is the square root of the variance. If you want to assume equal variance among treatments (the default), provide a single value. If you allow variances to differ among treatments provide a vector that contains a standard deviation for each treatment.
+#' @param sd_resid Numeric. The true standard deviation of the errors, which you may refer to as the residual standard deviation. The standard deviation is the square root of the variance. If you want to assume equal standard deviations among treatments (the default), provide a single value. If you allow standard deviations to differ among treatments provide a vector that contains a standard deviation for each treatment.
 #' @param sd_eq Logical. Whether or not to allow the variance of the errors should be constant among treatments. Defaults to `TRUE`.
-#' @param keep_data Logical. Whether you want to keep the simulated datasets that are used in the power analysis. Defaults to `FALSE`. It may be useful to keep the datasets if you'd like to do additional exploration of the simulated results.
-#' @param keep_models Logical. Whether you want to keep the models fit to each simulated datasets for the power analysis. Defaults to `FALSE`. It may be useful to keep the models if you'd like to do additional exploration of the models.
+#' @param keep_data Logical. Whether you want to keep the simulated datasets that are used in the power analysis. Defaults to `FALSE`. It may be useful to keep the datasets if you'd like to do additional exploration of the simulated results but this may make output very large.
+#' @param keep_models Logical. Whether you want to keep the models fit to each simulated datasets for the power analysis. Defaults to `FALSE`. It may be useful to keep the models if you'd like to do additional exploration of the models but this may make output very large.
 #'
-#' @return A list containing information on the simulation details, design details and true parameters and, when `test = "overall"`, estimated power based on the sample size.
+#' @return The printed output contains information on the simulation and power analysis. The object contains a list containing information on the simulation details, design details and true parameters and, when `test = "overall"`, estimated power based on the sample size. These can be extracted from the object by name but vary depending on chosen options.
+#'
+#' \itemize{
+#'   \item nsim - Number of simulations done.
+#'   \item ntrt - Number of treatment groups.
+#'   \item nblock - Number of blocks in study.
+#'   \item nrep - Number of replications of each treatment group in each block.
+#'   \item truemeans - Named vector of true treatment means used in simulation.
+#'   \item truesd - List containing true block and observatin-level (residual) standard deviations used in simulation.
+#'   \item data - If `keep_data = TRUE`, the simulated datasets used in the analysis. May be very large.
+#'   \item power - Estimated number of p-values less than alpha, expressed as a percentage.
+#'   \item alpha - Alpha used for power analysis.
+#'   \item p.values - P-values from test for every model.
+#'   \item models - If `keep_models = TRUE`, the fitted models for every simulated dataset. Maybe be very large.
+#' }
 #' @export
 #'
 #' @examples
@@ -29,11 +43,35 @@
 #'              sd_block = 2,
 #'              sd_resid = 4)
 #'
-#' # Setting treatment names
+#' # Allow variances to differ among treatments
 #' simpow_lmm_f(nsim = 100,
 #'              trtmeans = c(1, 25),
+#'              nblock = 10,
+#'              sd_block = 2,
+#'              sd_resid = c(1, 20),
+#'              sd_eq = FALSE
+#'
+#'  # Return simulated dataset for a single simulation
+#'  # Here don't run power analysis via test = "none"
+#' results = simpow_lmm_f(nsim = 1,
+#'              test = "none",
+#'              trtmeans = c(1, 25),
+#'              nblock = 10,
+#'              sd_block = 2,
+#'              sd_resid = 4,
+#'              keep_data = TRUE)
+#' results$data
+#'
+#'\dontrun{
+#' # Setting treatment names to match those in your study
+#' # Seen in results only
+#' results = simpow_lmm_f(nsim = 10,
+#'              trtmeans = c(1, 25),
+#'              trtnames = c("Control", "Treat1")
 #'              sd_block = 2,
 #'              sd_resid = 4)
+#' results
+#' }
 simpow_lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
                         ntrt = 2, trtmeans,
                         trtnames = NULL, nrep = 1,
