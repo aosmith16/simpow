@@ -1,16 +1,22 @@
 Package: simpow
-Title: What the Package Does (One Line, Title Case)
+Title: Simulation-based power analysis
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Ariel",
+           family = "Muldoon",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+           email = "ariel.muldoon@gmail.com")
+Description: The goal of this package is to enable the user to do simulation-based power analyses.
+    Simulation functions uses provided information on "true" parameter values and study design details to simulate data
+    based on a linear model, fit a model to the data, and extract p-values for overall tests of parameters. 
+    Power is calculated as the percent of p-values below the chosen alpha cut-off. Currently only very basic linear mixed models are supported.  
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+URL: https://github.com/aosmith16/simpow
+BugReports: https://github.com/aosmith16/simpow/issues
+Imports: 
+    nlme,
+    stats
