@@ -13,7 +13,7 @@
 #' @param sd_block Numeric. The true standard deviation based on the among-block variation. The standard deviation is the square root of the variance.
 #' @param sd_resid Numeric. The true standard deviation of the errors, which you may refer to as the residual standard deviation. The standard deviation is the square root of the variance. If you want to assume equal standard deviations among treatments (the default), provide a single value. If you allow standard deviations to differ among treatments provide a vector that contains a standard deviation for each treatment.
 #' @param sd_eq Logical. Whether or not to allow the variance of the errors should be constant among treatments. Defaults to `TRUE`.
-#' @param keep_data Logical. Whether you want to keep the simulated datasets that are used in the power analysis. Defaults to `FALSE`. It may be useful to keep the datasets if you'd like to do additional exploration of the simulated results but this may make output very large.
+#' @param keep_data Logical. Whether you want to keep the simulated datasets that are used in the power analysis. Defaults to `FALSE`. In some cases it will be useful to keep the datasets if you'd like to do additional exploration of the simulated results but this may make output very large.
 #' @param keep_models Logical. Whether you want to keep the models fit to each simulated datasets for the power analysis. Defaults to `FALSE`. It may be useful to keep the models if you'd like to do additional exploration of the models but this may make output very large.
 #'
 #' @return The printed output contains information on the simulation and power analysis. The object contains a list containing information on the simulation details, design details and true parameters and, when `test = "overall"`, estimated power based on the sample size. These can be extracted from the object by name but vary depending on chosen options.\tabular{ll}{
@@ -23,11 +23,11 @@
 #'   \code{nrep} \tab Number of replications of each treatment group in each block. \cr
 #'   \code{truemeans} \tab Named vector of true treatment means used in simulation. \cr
 #'   \code{truesd} \tab List containing true block and observation-level (residual) standard deviations used in simulation. \cr
-#'   \code{data} \tab If \code{keep_data = TRUE}, the simulated datasets used in the analysis. May be very large. \cr
+#'   \code{data} \tab If \code{keep_data = TRUE}, a list containing the simulated datasets used in the analysis. May be very large. \cr
 #'   \code{power} \tab Estimated number of p-values less than alpha, expressed as a percentage. \cr
 #'   \code{alpha} \tab Alpha used for power analysis. \cr
 #'   \code{p.values} \tab P-values from test for every model. \cr
-#'   \code{models} \tab If \code{keep_models = TRUE}, the fitted models for every simulated dataset. May be very large.\cr
+#'   \code{models} \tab If \code{keep_models = TRUE}, a list containing the fitted models for every simulated dataset. May be very large.\cr
 #' }
 #' @export
 #'
@@ -35,51 +35,51 @@
 #' # Power analysis based on 100 simulations for the overall test of two treatments.
 #' # There is one replicate of each treatment in each of 10 blocks.
 #' # Note the single residual SD.
-#' simpow_lmm_f(nsim = 100,
-#'              trtmeans = c(1, 4),
-#'              nblock = 10,
-#'              sd_block = 2,
-#'              sd_resid = 4)
+#' lmm_f(nsim = 100,
+#'       trtmeans = c(1, 4),
+#'       nblock = 10,
+#'       sd_block = 2,
+#'       sd_resid = 4)
 #'
 #'
 #' # Allow variances to differ among treatments
-#' simpow_lmm_f(nsim = 100,
-#'              trtmeans = c(1, 4),
-#'              nblock = 10,
-#'              sd_block = 2,
-#'              sd_resid = c(1, 20),
-#'              sd_eq = FALSE)
+#' lmm_f(nsim = 100,
+#'       trtmeans = c(1, 4),
+#'       nblock = 10,
+#'       sd_block = 2,
+#'       sd_resid = c(1, 20),
+#'       sd_eq = FALSE)
 #'
 #' # Change the number of treatment groups
-#' simpow_lmm_f(nsim = 100,
-#'              ntrt = 3,
-#'              trtmeans = c(1, 3, 4),
-#'              nblock = 10,
-#'              sd_block = 2,
-#'              sd_resid = 4)
+#' lmm_f(nsim = 100,
+#'       ntrt = 3,
+#'       trtmeans = c(1, 3, 4),
+#'       nblock = 10,
+#'       sd_block = 2,
+#'       sd_resid = 4)
 #'
 #'  # Return simulated dataset for a single simulation
 #'  # Here don't run power analysis via test = "none"
-#' results = simpow_lmm_f(nsim = 1,
-#'              test = "none",
-#'              trtmeans = c(1, 4),
-#'              nblock = 10,
-#'              sd_block = 2,
-#'              sd_resid = 4,
-#'              keep_data = TRUE)
+#' results = lmm_f(nsim = 1,
+#'                 test = "none",
+#'                 trtmeans = c(1, 4),
+#'                 nblock = 10,
+#'                 sd_block = 2,
+#'                 sd_resid = 4,
+#'                 keep_data = TRUE)
 #' results$data
 #'
 #'\dontrun{
 #' # Setting treatment names to match those in your study
 #' # Seen in results only
-#' results = simpow_lmm_f(nsim = 10,
-#'              trtmeans = c(1, 25),
-#'              trtnames = c("Control", "Treat1")
-#'              sd_block = 2,
-#'              sd_resid = 4)
+#' results = lmm_f(nsim = 10,
+#'                 trtmeans = c(1, 25),
+#'                 trtnames = c("Control", "Treat1")
+#'                 sd_block = 2,
+#'                 sd_resid = 4)
 #' results
 #' }
-simpow_lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
+lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
                         ntrt = 2, trtmeans,
                         trtnames = NULL, nrep = 1,
                         nblock = 5, sd_block,
@@ -112,7 +112,7 @@ simpow_lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
 
     if(nblock < 3) {
         stop(call. = FALSE,
-             "The number of levels for your blocking random effect should be at least 3.")
+             "The number of groups for your blocking random effect should be at least 3.")
     }
 
     makedata = function(.ntrt = ntrt,
