@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of this package is to provide helper functions for simple power analyses based on linear mixed models. (Support for generalized linear mixed models will be added in the future.)
+The goal of this package is to provide helper functions for simple power analyses based on linear mixed models (LMM's). (Support for generalized linear mixed models will be added in the future.)
 
 ## Installation
 
@@ -33,65 +33,68 @@ devtools::install_github("aosmith16/simpow")
 
 ## Example
 
-The primary function in **simpow** at the moment is called `simpow_lmm_f()`, which uses `nlme::lme()` to fit models under the hood.
+The primary function in **simpow** at the moment is called `lmm_f()`, which uses `nlme::lme()` to fit models under the hood.
 
-Use it to run a simulation-based power analysis of a LMM with a single random effect ("block") and a single, categorical fixed effect called "treatment".
+Use this function to run a simulation-based power analysis of a LMM with a single random effect ("block") and a single, categorical fixed effect called "treatment".
 
 By default there are two groups for the treatment variable (`ntrt = 2`). You need to provide the "true" means for those groups as well as a block and observation-level (residual) standard deviation.
 
-Here is the power to detect that at least one of the treatment means is different based on 100 simulations, treatment means of 1 and 4, and the provided standard deviations. 
+Here is the power to detect that at least one of the treatment means is different based on 100 simulations using an alpha of 0.05. I set the treatment means to 1 and 4 and standard deviations of 2 and 4 for the block random effect and residual error term.
 
-I show only 100 simulations here to save time. I set the seed only to make these results reproducible. You will generally not set the seed when using **simpow**.
+You will generally want more than 100 simulations. I use that here to save time. I set the seed to make these results reproducible but most often you will not set the seed when using functions from **simpow**.
 
 ```{r}
 library(simpow)
 set.seed(16) 
-simpow_lmm_f(nsim = 100,
-             ntrt = 2,
-             trtmeans = c(1, 4),
-             nblock = 10,
-             sd_block = 2,
-             sd_resid = 4)
+lmm_f(nsim = 100,
+      ntrt = 2,
+      trtmeans = c(1, 4),
+      nblock = 10,
+      sd_block = 2,
+      sd_resid = 4)
 ```
 
-Do more groups by changing `ntrt` away from the default.
+Add more treatment groups by changing `ntrt` away from the default.
 
 ```{r}
-simpow_lmm_f(nsim = 100,
-             ntrt = 3,
-             trtmeans = c(1, 3, 4),
-             nblock = 10,
-             sd_block = 2,
-             sd_resid = 4)
+set.seed(16) 
+lmm_f(nsim = 100,
+      ntrt = 3,
+      trtmeans = c(1, 3, 4),
+      nblock = 10,
+      sd_block = 2,
+      sd_resid = 4)
 ```
 
-The default power analysis has a single replicate per treatment per block, like you might have in many completely randomized block designs, but this can be changed. Here there are 5 replicates for every treatment in every block for a total of 100 observations in each dataset.
+The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. This can be changed. Here there are 5 replicates for every treatment in every block for a total of 100 observations in each dataset.
 
 ```{r}
-simpow_lmm_f(nsim = 100,
-             ntrt = 2,
-             trtmeans = c(1, 4),
-             nblock = 10,
-             nrep = 5,
-             sd_block = 2,
-             sd_resid = 4)
+set.seed(16) 
+lmm_f(nsim = 100,
+      ntrt = 2,
+      trtmeans = c(1, 4),
+      nblock = 10,
+      nrep = 5,
+      sd_block = 2,
+      sd_resid = 4)
 ```
 
 ### Nonconstant variance
 
-If it makes sense to allow different variances per treatment group, use `sd_eq = FALSE`. You then must provide a separate standard deviation for every treatment group in `sd_resid` or you will get an error. 
+If it makes sense to allow different variances per treatment group, use `sd_eq = FALSE`. You then must provide a separate standard deviation for every treatment group via `sd_resid` or you will get an error. 
 
 These models tend to fit more slowly than models assuming constant variance of the errors so run times will be longer.
 
 ```{r}
-simpow_lmm_f(nsim = 100,
-             ntrt = 2,
-             trtmeans = c(1, 4),
-             nblock = 10,
-             nrep = 5,
-             sd_block = 2,
-             sd_resid = c(1, 4),
-             sd_eq = FALSE)
+set.seed(16) 
+lmm_f(nsim = 100,
+      ntrt = 2,
+      trtmeans = c(1, 4),
+      nblock = 10,
+      nrep = 5,
+      sd_block = 2,
+      sd_resid = c(1, 4),
+      sd_eq = FALSE)
 ```
 
 ### Simulated datasets
@@ -101,14 +104,15 @@ If you want to create the simulate datasets instead of (or in addition to) doing
 The dataset can then by extracted from the output object via `data`.
 
 ```{r}
-results = simpow_lmm_f(nsim = 2,
-                       test = "none",
-                       ntrt = 2,
-                       trtmeans = c(1, 4),
-                       nblock = 5,
-                       sd_block = 2,
-                       sd_resid = 4,
-                       keep_data = TRUE)
+set.seed(16) 
+results = lmm_f(nsim = 2,
+                test = "none",
+                ntrt = 2,
+                trtmeans = c(1, 4),
+                nblock = 5,
+                sd_block = 2,
+                sd_resid = 4,
+                keep_data = TRUE)
 results$data
 ```
 
