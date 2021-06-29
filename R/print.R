@@ -1,8 +1,14 @@
-#' print method for simpow objects
+#' methods for simpow objects
 #'
 #' @param x The output from a power analysis function
-#' @param ... additional arguments, not currently used
+#' @param object The output from a power analysis function
+#' @param ... additional arguments to functions, not currently used
 #'
+#' @return Power is reported as a percentage in `summary()` and `print()`, so had been pre-multiplied by 100.
+#'
+#' @details
+#' The `print()` function returns a written summary of the power analysis to the Console.
+#' The `summary()` function returns a data.frame of design details and the power, primarily useful if varying design details and running more than one power analyses.
 #' @export
 print.simpow = function(x, ...) {
 
@@ -17,4 +23,17 @@ print.simpow = function(x, ...) {
         cat("Number blocks:", x[["nblock"]], "\n")
         cat("Total observations in each dataset:", x[["ntrt"]]*x[["nblock"]]*x[["nrep"]])
     }
+}
+
+#' @rdname print.simpow
+#' @export
+summary.simpow = function(object, ...) {
+    data.frame(ntrt = object[["ntrt"]],
+               nblock = object[["nblock"]],
+               nrep = object[["nrep"]],
+               total_samp = object[["ntrt"]]*object[["nblock"]]*object[["nrep"]],
+               sd_block = object[["truesd"]][[1]],
+               sd_resid = object[["truesd"]][[2]],
+               alpha = object[["alpha"]],
+               power = object[["power"]]*100)
 }

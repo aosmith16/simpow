@@ -2,15 +2,27 @@
 % Please edit documentation in R/print.R
 \name{print.simpow}
 \alias{print.simpow}
-\title{print method for simpow objects}
+\alias{summary.simpow}
+\title{methods for simpow objects}
 \usage{
 \method{print}{simpow}(x, ...)
+
+\method{summary}{simpow}(object, ...)
 }
 \arguments{
 \item{x}{The output from a power analysis function}
 
-\item{...}{additional arguments, not currently used}
+\item{...}{additional arguments to functions, not currently used}
+
+\item{object}{The output from a power analysis function}
+}
+\value{
+Power is reported as a percentage in \code{summary()} and \code{print()}, so had been pre-multiplied by 100.
 }
 \description{
-print method for simpow objects
+methods for simpow objects
+}
+\details{
+The \code{print()} function returns a written summary of the power analysis to the Console.
+The \code{summary()} function returns a data.frame of design details and the power, primarily useful if varying design details and running more than one power analyses.
 }

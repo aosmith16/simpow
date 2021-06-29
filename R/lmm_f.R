@@ -1,22 +1,24 @@
 #' Simulation-based power analysis for a linear mixed model
 #'
-#'Simulate data and perform a power analysis based on provided study design details and values for parameters. Data must be balanced. Models are fit with `nlme::lme()`can contain a single categorical fixed effect and a single random effect. Variances can be allowed to vary among the fixed effect. categories. The categorical fixed effect is referred to as "treatment" and the random effect is called "block".
+#' Simulate data and perform a power analysis based on provided study design elements and values for model parameters. Data must be balanced. Models are fit with `nlme::lme()` and can contain a single categorical fixed effect and a single random effect. Variances can be allowed to vary among the fixed effect categories. The categorical fixed effect is referred to as "treatment" and the random effect is called "block".
 #'
-#' @param nsim Numeric. The number of simulations to run. Defaults to 1, which is useful if you are testing what the datasets look like or how long each analysis takes to run. Otherwise for the full power analysis you'll want to use a large number, such as 1000. Note that the more simulations you do the longer it will take to finish.
-#' @param test Character. Can currently take "none" or "overall"; defaults to "overall". Use "none" if you only want simulated datasets. Use "overall" to do power analysis on overall F test of fixed effect.
-#' @param alpha Numeric. The alpha value you want to test against. Defaults to 0.05.
-#' @param ntrt Numeric. The number of categories or "treatments" that your categorical fixed effect will have. Defaults to 2. Value must be greater than 1.
+#' @param nsim Numeric. The number of simulations to run. Defaults to 1, which is useful if you are testing what the simulated datasets look like or how long each analysis takes to run. Otherwise for the full power analysis you'll want to use a large number, such as 1000. Note that the more simulations you do the longer the power analysis will take.
+#' @param test Character. Can currently take `"none"` or `"overall"`; defaults to `"overall"`. Use `"none"` if you only want the simulated datasets. Use `"overall"` to do a power analysis on the overall F test of fixed effect.
+#' @param alpha Numeric. The alpha value you want to test against. Defaults to `0.05`.
+#' @param ntrt Numeric. The number of categories or "treatments" that your categorical fixed effect will have. Defaults to `2`. Value must be greater than 1.
 #' @param trtmeans Numeric vector. The true means for each of your treatment groups.
-#' @param trtnames Optional character vector. The names for each of your treatment groups. If not provided treatments will be named with letters.
+#' @param trtnames Optional character vector. The names for each of your treatment groups. If not provided the treatments will be named with letters.
 #' @param nrep Numeric. Number of replicates within each treatment within each block. Defaults to 1.
-#' @param nblock Numeric. Total number of blocks, where each treatment is replicated at least one time (based on `nrep`) in each block. Defaults to 5. Must be greater than 2.
-#' @param sd_block Numeric. The true standard deviation based on the among-block variation. The standard deviation is the square root of the variance.
-#' @param sd_resid Numeric. The true standard deviation of the errors, which you may refer to as the residual standard deviation. The standard deviation is the square root of the variance. If you want to assume equal standard deviations among treatments (the default), provide a single value. If you allow standard deviations to differ among treatments provide a vector that contains a standard deviation for each treatment.
-#' @param sd_eq Logical. Whether or not to allow the variance of the errors should be constant among treatments. Defaults to `TRUE`.
-#' @param keep_data Logical. Whether you want to keep the simulated datasets that are used in the power analysis. Defaults to `FALSE`. In some cases it will be useful to keep the datasets if you'd like to do additional exploration of the simulated results but this may make output very large.
-#' @param keep_models Logical. Whether you want to keep the models fit to each simulated datasets for the power analysis. Defaults to `FALSE`. It may be useful to keep the models if you'd like to do additional exploration of the models but this may make output very large.
+#' @param nblock Numeric. Total number of blocks, where each treatment is replicated at least once per block. Defaults to `5`. Must be greater than 2.
+#' @param sd_block Numeric. The true among-block standard deviation. The standard deviation is the square root of the variance.
+#' @param sd_resid Numeric. The true standard deviation of the errors, which you may hear referred to as the residual standard deviation. The standard deviation is the square root of the variance. If you want to assume equal standard deviations among treatments (the default), provide a single value. If you allow standard deviations to differ among treatments provide a vector that contains a standard deviation for each treatment.
+#' @param sd_eq Logical. Whether or not to allow the variance of the errors to be constant among treatments. Defaults to `TRUE`.
+#' @param keep_data Logical. Whether you want to keep the simulated datasets that are used in the power analysis. Defaults to `FALSE`. In some cases it will be useful to keep the datasets, such as if you'd like to do additional exploration of the simulated results. However, this may make the final output quite large.
+#' @param keep_models Logical. Whether you want to keep the models fit to each simulated dataset in the power analysis. Defaults to `FALSE`. It may be useful to keep the models if you'd like to do additional exploration of them but this may make output quite large.
 #'
-#' @return The printed output contains information on the simulation and power analysis. The object contains a list containing information on the simulation details, design details and true parameters and, when `test = "overall"`, estimated power based on the sample size. These can be extracted from the object by name but vary depending on chosen options.\tabular{ll}{
+#' @return The printed output contains information on the simulation design elements and paramters as well as the estimated power.
+#'
+#' The returned object contains a list containing information on the simulation details, design details and true parameters and, when `test = "overall"`, estimated power based on the sample size. These can be extracted from the object by name. Note that which values are returned varies depending on chosen options.\tabular{ll}{
 #'   \code{nsim} \tab Number of simulations done. \cr
 #'   \code{ntrt} \tab Number of treatment groups. \cr
 #'   \code{nblock} \tab Number of blocks in study. \cr
@@ -29,6 +31,8 @@
 #'   \code{p.values} \tab P-values from test for every model. \cr
 #'   \code{models} \tab If \code{keep_models = TRUE}, a list containing the fitted models for every simulated dataset. May be very large.\cr
 #' }
+#' @seealso [vary_size()] to run through multiple power analyses using different parameters or design elements.
+#'
 #' @export
 #'
 #' @examples
@@ -80,11 +84,11 @@
 #' results
 #' }
 lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
-                        ntrt = 2, trtmeans,
-                        trtnames = NULL, nrep = 1,
-                        nblock = 5, sd_block,
-                        sd_resid, sd_eq = TRUE,
-                        keep_data = FALSE, keep_models = FALSE) {
+                 ntrt = 2, trtmeans,
+                 trtnames = NULL, nrep = 1,
+                 nblock = 5, sd_block,
+                 sd_resid, sd_eq = TRUE,
+                 keep_data = FALSE, keep_models = FALSE) {
 
     if(length(trtmeans) != ntrt) {
         stop(call. = FALSE,
