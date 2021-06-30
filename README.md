@@ -18,7 +18,7 @@ You can install the **simpow** from GitHub:
 
     devtools::install_github("aosmith16/simpow")
 
-## Example of `lmm_f()`
+## Simulated power analysis for basic LMM
 
 The primary function in **simpow** at the moment is called `lmm_f()`,
 which uses `nlme::lme()` to fit models under the hood.
@@ -170,13 +170,30 @@ Similarly you can keep fitted models via `keep_models = TRUE` and
 extracting via `models`. (Not shown.) Other values you can extract from
 the returned object is the vector of p-values (`p.values`).
 
-## Example varying parameters or design elements
+## Power when varying parameters or design elements
 
 You can use the `vary_element()` to run a power analysis for different
 values of a parameter or study design element. This allows the user to
 explore how best to set up their study or what effect they can
-realistically expect to detect.
+realistically expect to detect. Note only 1 element may be varied at a
+time.
 
 However, using this function means doing an entire simulation multiple
-times and so ultimately this may be very slow. You may want to skip
-doing extremely fine-scale changes.
+times and so ultimately this may be very slow when using 1000
+simulations in each analysis. For this reason you may want to skip doing
+extremely fine-scale changes.
+
+Here’s an example of allowing for more blocks, holding all other
+arguments constant for the power analysis. I unrealistically do only 10
+simulations to save running time.
+
+    set.seed(16)
+    vary_size(tovary = "nblock",
+              values = c(5, 15),
+              nsim = 10,
+              trtmeans = c(1, 2),
+              sd_block = 2,
+              sd_resid = 2)
+    #>   ntrt nblock nrep total_samp sd_block sd_resid alpha power
+    #> 1    2      5    1         10        2        2  0.05     0
+    #> 2    2     15    1         30        2        2  0.05    20
