@@ -18,8 +18,17 @@
 #' @examples
 #' # Here's an example to explore the change in power
 #'     # for 5 vs 15 blocks in lmm_f()
-#' vary_size(tovary = "nblock",
+#' vary_element(tovary = "nblock",
 #'           values = c(5, 15),
+#'           nsim = 10,
+#'           trtmeans = c(1, 2),
+#'           sd_block = 2,
+#'           sd_resid = 2)
+#'
+#' # Allow for more reps per treatment group
+#'     # in each block
+#' vary_element(tovary = "nrep",
+#'           values = c(6, 10),
 #'           nsim = 10,
 #'           trtmeans = c(1, 2),
 #'           sd_block = 2,
@@ -27,13 +36,13 @@
 #'
 #' # Here is an example varying
 #'     # the residual standard deviations
-#' vary_size(tovary = "sd_resid",
+#' vary_element(tovary = "sd_resid",
 #'           values = c(2, 10),
 #'           nsim = 20,
 #'           trtmeans = c(1, 2),
 #'           nblock = 15,
 #'           sd_block = 2)
-vary_size = function(simfun = "lmm_f",
+vary_element = function(simfun = "lmm_f",
                      tovary = "nrep",
                      values,
                      ...) {

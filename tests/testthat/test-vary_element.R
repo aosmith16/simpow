@@ -1,6 +1,6 @@
 test_that("returned output is same manual calls", {
     set.seed(16)
-    res = vary_size(tovary = "nblock",
+    res = vary_element(tovary = "nblock",
                     values = c(5, 15),
                     nsim = 10,
                     trtmeans = c(1, 2),

@@ -117,5 +117,5 @@ results
 }
 }
 \seealso{
-\code{\link[=vary_size]{vary_size()}} to run through multiple power analyses using different parameters or design elements.
+\code{\link[=vary_element]{vary_element()}} to run through multiple power analyses using different parameters or design elements.
 }

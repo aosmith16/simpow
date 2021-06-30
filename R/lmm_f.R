@@ -31,7 +31,7 @@
 #'   \code{p.values} \tab P-values from test for every model. \cr
 #'   \code{models} \tab If \code{keep_models = TRUE}, a list containing the fitted models for every simulated dataset. May be very large.\cr
 #' }
-#' @seealso [vary_size()] to run through multiple power analyses using different parameters or design elements.
+#' @seealso [vary_element()] to run through multiple power analyses using different parameters or design elements.
 #'
 #' @export
 #'
