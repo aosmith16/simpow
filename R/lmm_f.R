@@ -1,13 +1,13 @@
 #' Simulation-based power analysis for a linear mixed model
 #'
-#' Simulate data and perform a power analysis based on provided study design elements and values for model parameters. Data must be balanced. Models are fit with `nlme::lme()` and can contain a single categorical fixed effect and a single random effect. Variances can be allowed to vary among the fixed effect categories. The categorical fixed effect is referred to as "treatment" and the random effect is called "block".
+#' Simulate data and perform a power analysis based on a simple blocked design with a single fixed effect. Simulations are done based on provided study design elements and values for model parameters. Data must be balanced. Models are fit with `nlme::lme()` and can contain a single categorical fixed effect and a single random effect. Variances can be allowed to vary among the fixed effect categories. The categorical fixed effect is referred to as "treatment" and the random effect is called "block".
 #'
 #' @param nsim Numeric. The number of simulations to run. Defaults to 1, which is useful if you are testing what the simulated datasets look like or how long each analysis takes to run. Otherwise for the full power analysis you'll want to use a large number, such as 1000. Note that the more simulations you do the longer the power analysis will take.
 #' @param test Character. Can currently take `"none"` or `"overall"`; defaults to `"overall"`. Use `"none"` if you only want the simulated datasets. Use `"overall"` to do a power analysis on the overall F test of fixed effect.
 #' @param alpha Numeric. The alpha value you want to test against. Defaults to `0.05`.
 #' @param ntrt Numeric. The number of categories or "treatments" that your categorical fixed effect will have. Defaults to `2`. Value must be greater than 1.
-#' @param trtmeans Numeric vector. The true means for each of your treatment groups.
-#' @param trtnames Optional character vector. The names for each of your treatment groups. If not provided the treatments will be named with letters.
+#' @param trtmeans Numeric vector of length `ntrt`. The true means for each of your treatment groups.
+#' @param trtnames Optional character vector of length `ntrt`. The names for each of your treatment groups. If not provided the treatments will be named with letters.
 #' @param nrep Numeric. Number of replicates within each treatment within each block. Defaults to 1.
 #' @param nblock Numeric. Total number of blocks, where each treatment is replicated at least once per block. Defaults to `5`. Must be greater than 2.
 #' @param sd_block Numeric. The true among-block standard deviation. The standard deviation is the square root of the variance.
@@ -31,7 +31,8 @@
 #'   \code{p.values} \tab P-values from test for every model. \cr
 #'   \code{models} \tab If \code{keep_models = TRUE}, a list containing the fitted models for every simulated dataset. May be very large.\cr
 #' }
-#' @seealso [vary_element()] to run through multiple power analyses using different parameters or design elements.
+#' @details This function is for simulating a power analysis based on a blocked design. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction.
+#' @seealso See [lm_2f()] for an all-fixed effects alternative. Use [vary_element()] to run through multiple power analyses using different parameters or design elements.
 #'
 #' @export
 #'
@@ -93,14 +94,14 @@ lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
     if(length(trtmeans) != ntrt) {
         stop(call. = FALSE,
              "You must provide a mean for every treatment group.\n",
-             "Check that the number of means in trtmeans matches the value you put in ntrt.")
+             "Check that the number of means in trtmeans matches the ntrt value.")
     }
 
 
     if(!is.null(trtnames) & length(trtnames) != ntrt) {
         stop(call. = FALSE,
              "You must provide a name for every treatment group.\n",
-             "Check that the number of names in trtnames matches the value you put in ntrt.")
+             "Check that the number of names in trtnames matches the ntrt value.")
     }
 
     if(!sd_eq & length(sd_resid) != ntrt) {
@@ -116,10 +117,17 @@ lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
 
     if(nblock < 3) {
         stop(call. = FALSE,
-             "The number of groups for your blocking random effect should be at least 3.")
+             "The number of groups for your blocking random effect should be at least 3.\n",
+             "If this is correct, consider treating blocks as a fixed effect.")
     }
 
-    makedata = function(.ntrt = ntrt,
+    if(nblock < 5) {
+        rlang::inform("You have <5 blocks. Would you like treat them as fixed instead of random?",
+                      .frequency = "once",
+                      .frequency_id = "fewblocks")
+    }
+
+    .makedata = function(.ntrt = ntrt,
                         .trtmeans = trtmeans,
                         .trtnames = trtnames,
                         .nrep = nrep,
@@ -131,7 +139,7 @@ lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
         blocks = rep(as.character(1:.nblock), each = .ntrt*.nrep)
         trt = rep(.trtnames, times = .nblock*.nrep)
 
-        # Creat values for linear predictor
+        # Create values for linear predictor
         blockeff = rep(stats::rnorm(n = .nblock, mean = 0, sd = .sd_block), each = .ntrt*.nrep)
         trteff = rep(.trtmeans, times = .nblock*.nrep)
         resid = stats::rnorm(n = .ntrt*.nblock*.nrep, mean = 0, sd = .sd_resid)
@@ -143,7 +151,7 @@ lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
     }
 
     # Create many datasets
-    alldat = replicate(n = nsim, expr = makedata(), simplify = FALSE)
+    alldat = replicate(n = nsim, expr = .makedata(), simplify = FALSE)
 
     # Create object to return
     res = list()
@@ -174,11 +182,11 @@ lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
 
     if(test == "overall") {
         if(sd_eq) {
-            mods = lapply(alldat, fitmodel_eq)
+            mods = lapply(alldat, fitlmm_f_eq)
         } else {
-            mods = lapply(alldat, fitmodel_uneq)
+            mods = lapply(alldat, fitlmm_f_uneq)
         }
-        p = unlist(lapply(mods, getp_lme))
+        p = unlist(lapply(mods, getp_lmm_f))
         pow = mean(p < alpha)
 
         res$power = pow

@@ -22,6 +22,7 @@ print.simpow = function(x, ...) {
         cat("Number treatments:", x[["ntrt"]], "\n")
         cat("Number blocks:", x[["nblock"]], "\n")
         cat("Total observations in each dataset:", x[["ntrt"]]*x[["nblock"]]*x[["nrep"]])
+        cat("\n")
     }
 }
 

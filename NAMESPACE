@@ -2,6 +2,8 @@
 
 S3method(print,simpow)
 S3method(summary,simpow)
+export(lm_2f)
 export(lmm_f)
 export(vary_element)
 importFrom(nlme,anova.lme)
+importFrom(rlang,inform)
