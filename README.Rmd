@@ -23,9 +23,7 @@ The goal of this package is to provide helper functions for simple power analyse
 
 ## Installation
 
-And the development version from [GitHub](https://github.com/) with:
-
-You can install the **simpow** from GitHub:
+You can install the **simpow** from [GitHub](https://github.com/aosmith16/simpow):
 
 ```{r, eval = FALSE}
 devtools::install_github("aosmith16/simpow")

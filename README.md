@@ -16,9 +16,8 @@ future
 
 ## Installation
 
-And the development version from [GitHub](https://github.com/) with:
-
-You can install the **simpow** from GitHub:
+You can install the **simpow** from
+[GitHub](https://github.com/aosmith16/simpow):
 
     devtools::install_github("aosmith16/simpow")
 
