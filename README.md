@@ -244,7 +244,10 @@ simulations to save running time.
     #> 1    2      5    1         10        2        4  0.05     4
     #> 2    2     15    1         30        2        4  0.05     7
 
-Change the `simfun` to explore a different simulation function.
+Change the `simfun` to explore a different simulation function. For
+`lm_2f()` for limited-block-number designs this will probably be most
+useful for varying the number of replicates per treatment per block or
+residual standard deviation.
 
     set.seed(16)
     vary_element(simfun = "lm_2f",
@@ -256,3 +259,8 @@ Change the `simfun` to explore a different simulation function.
     #>   ntrt nblock nrep total_samp sd_resid alpha power
     #> 1    2      3    1          6        4  0.05    45
     #> 2    2      3   10         60        4  0.05   100
+
+Note that in the `lm_wf()` case above, trying to vary the block number
+would add a complexity `var_element()` can’t handle because you would
+also need to provide different block means. This is not currently
+possible.
