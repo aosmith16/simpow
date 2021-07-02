@@ -1,6 +1,6 @@
 #' Simulation-based power analysis for a linear mixed model
 #'
-#' Simulate data and perform a power analysis based on a simple blocked design with a single fixed effect. Simulations are done based on provided study design elements and values for model parameters. Data must be balanced. Models are fit with `nlme::lme()` and can contain a single categorical fixed effect and a single random effect. Variances can be allowed to vary among the fixed effect categories. The categorical fixed effect is referred to as "treatment" and the random effect is called "block".
+#' Simulate data and perform a power analysis based on a simple blocked design with a single fixed effect. Simulations are done based on provided study design elements and values for model parameters. Data must be balanced. Models are fit with `nlme::lme()` and can contain a single categorical fixed effect and a single random effect. The fixed effect of interest is referred to as "treatment" and the design-based fixed effect is called "block".  Variances can be allowed to vary among the treatment categories.
 #'
 #' @param nsim Numeric. The number of simulations to run. Defaults to 1, which is useful if you are testing what the simulated datasets look like or how long each analysis takes to run. Otherwise for the full power analysis you'll want to use a large number, such as 1000. Note that the more simulations you do the longer the power analysis will take.
 #' @param test Character. Can currently take `"none"` or `"overall"`; defaults to `"overall"`. Use `"none"` if you only want the simulated datasets. Use `"overall"` to do a power analysis on the overall F test of fixed effect.
@@ -16,7 +16,7 @@
 #' @param keep_data Logical. Whether you want to keep the simulated datasets that are used in the power analysis. Defaults to `FALSE`. In some cases it will be useful to keep the datasets, such as if you'd like to do additional exploration of the simulated results. However, this may make the final output quite large.
 #' @param keep_models Logical. Whether you want to keep the models fit to each simulated dataset in the power analysis. Defaults to `FALSE`. It may be useful to keep the models if you'd like to do additional exploration of them but this may make output quite large.
 #'
-#' @return The printed output contains information on the simulation design elements and paramters as well as the estimated power.
+#' @return The printed output contains information on the simulation design elements and parameters as well as the estimated power.
 #'
 #' The returned object contains a list containing information on the simulation details, design details and true parameters and, when `test = "overall"`, estimated power based on the sample size. These can be extracted from the object by name. Note that which values are returned varies depending on chosen options.\tabular{ll}{
 #'   \code{nsim} \tab Number of simulations done. \cr
@@ -31,7 +31,7 @@
 #'   \code{p.values} \tab P-values from test for every model. \cr
 #'   \code{models} \tab If \code{keep_models = TRUE}, a list containing the fitted models for every simulated dataset. May be very large.\cr
 #' }
-#' @details This function is for simulating a power analysis based on a blocked design. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction.
+#' @details This function is for a power analysis based on simulating from a basic blocked design. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction. The model form is essentially `response ~ treatment + (1|block)`.
 #' @seealso See [lm_2f()] for an all-fixed effects alternative. Use [vary_element()] to run through multiple power analyses using different parameters or design elements.
 #'
 #' @export

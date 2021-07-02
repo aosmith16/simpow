@@ -71,7 +71,7 @@ The returned object contains a list containing information on the simulation det
 Simulate data and perform a power analysis based on a simple blocked design with few blocks. Simulations are done on provided study design elements and values for model parameters. Data must be balanced. Models are fit with \code{stats::lm()} or \code{nlme::gls()} and can contain two categorical fixed effects with no interaction between them. The fixed effect of interest is referred to as "treatment" and the design-based fixed effect is called "block".  Variances can be allowed to vary among the treatment categories.
 }
 \details{
-This function is an alternative to \code{lmm_f.R} for simulating a power analysis based on a blocked design when the number of blocks is low and you want to treat the blocking variable as fixed instead of random. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction.
+This function is an alternative to \code{lmm_f.R} for a power analysis based on simulating from a basic blocked design when the number of blocks is low and you want to treat the blocking variable as fixed instead of random. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction. The model form is essentially \code{response ~ block + treatment}.
 }
 \examples{
 # Power analysis based on 100 simulations for the overall test of two treatments.

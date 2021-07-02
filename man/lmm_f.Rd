@@ -48,7 +48,7 @@ lmm_f(
 \item{keep_models}{Logical. Whether you want to keep the models fit to each simulated dataset in the power analysis. Defaults to \code{FALSE}. It may be useful to keep the models if you'd like to do additional exploration of them but this may make output quite large.}
 }
 \value{
-The printed output contains information on the simulation design elements and paramters as well as the estimated power.
+The printed output contains information on the simulation design elements and parameters as well as the estimated power.
 
 The returned object contains a list containing information on the simulation details, design details and true parameters and, when \code{test = "overall"}, estimated power based on the sample size. These can be extracted from the object by name. Note that which values are returned varies depending on chosen options.\tabular{ll}{
 \code{nsim} \tab Number of simulations done. \cr
@@ -65,10 +65,10 @@ The returned object contains a list containing information on the simulation det
 }
 }
 \description{
-Simulate data and perform a power analysis based on a simple blocked design with a single fixed effect. Simulations are done based on provided study design elements and values for model parameters. Data must be balanced. Models are fit with \code{nlme::lme()} and can contain a single categorical fixed effect and a single random effect. Variances can be allowed to vary among the fixed effect categories. The categorical fixed effect is referred to as "treatment" and the random effect is called "block".
+Simulate data and perform a power analysis based on a simple blocked design with a single fixed effect. Simulations are done based on provided study design elements and values for model parameters. Data must be balanced. Models are fit with \code{nlme::lme()} and can contain a single categorical fixed effect and a single random effect. The fixed effect of interest is referred to as "treatment" and the design-based fixed effect is called "block".  Variances can be allowed to vary among the treatment categories.
 }
 \details{
-This function is for simulating a power analysis based on a blocked design. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction.
+This function is for a power analysis based on simulating from a basic blocked design. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction. The model form is essentially \code{response ~ treatment + (1|block)}.
 }
 \examples{
 # Power analysis based on 100 simulations for the overall test of two treatments.

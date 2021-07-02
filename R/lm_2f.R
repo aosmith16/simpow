@@ -34,7 +34,7 @@
 #'   \code{p.values} \tab P-values from test for every model. \cr
 #'   \code{models} \tab If \code{keep_models = TRUE}, a list containing the fitted models for every simulated dataset. May be very large.\cr
 #' }
-#' @details This function is an alternative to `lmm_f.R` for simulating a power analysis based on a blocked design when the number of blocks is low and you want to treat the blocking variable as fixed instead of random. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction.
+#' @details This function is an alternative to `lmm_f.R` for a power analysis based on simulating from a basic blocked design when the number of blocks is low and you want to treat the blocking variable as fixed instead of random. The default power analysis has a single replicate per treatment per block like you might have in many completely randomized block designs. You can increase the number of replicates per treatment per block but the model does not allow for a treatment-by-block interaction. The model form is essentially `response ~ block + treatment`.
 #' @seealso See [lmm_f()] for an alternative with blocks as a random effect. Use [vary_element()] to run through multiple power analyses using different parameters or design elements.
 #'
 #' @export
