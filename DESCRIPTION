@@ -8,8 +8,9 @@ Authors@R:
            email = "ariel.muldoon@gmail.com")
 Description: The goal of this package is to enable the user to do simulation-based power analyses.
     Simulation functions uses provided information on "true" parameter values and study design details to simulate data
-    based on a linear model, fit a model to the data, and extract p-values for overall tests of parameters. 
-    Power is calculated as the percent of p-values below the chosen alpha cut-off. Currently only very basic linear mixed models are supported.  
+    based on some linear model, fit a model to the data, and extract p-values for overall tests of parameters. 
+    Power is calculated as the percentage of p-values from all models below the chosen alpha cut-off. Currently only 
+    two-factor linear models and very basic linear mixed models are supported.  
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

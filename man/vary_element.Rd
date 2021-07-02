@@ -7,7 +7,7 @@
 vary_element(simfun = "lmm_f", tovary = "nrep", values, ...)
 }
 \arguments{
-\item{simfun}{Character. The name of the function you want to use for the simulations. Currently can only be \code{"lmm_f"}.}
+\item{simfun}{Character. The name of the function you want to use for the simulations. Currently can only be \code{"lmm_f"} (the default) or \code{"lm_2f"}.}
 
 \item{tovary}{Character. The name of the argument for the study design element you'd like to allow to vary in the function you defined in \code{simfun}. At the moment only a single element can vary at any one time. Currently defaults to \code{"nrep"}.}
 
@@ -53,5 +53,5 @@ vary_element(tovary = "sd_resid",
           sd_block = 2)
 }
 \seealso{
-\code{\link[=lmm_f]{lmm_f()}} for the function arguments you'll need to define in \code{...}.
+\code{\link[=lmm_f]{lmm_f()}} and \code{\link[=lm_2f]{lm_2f()}} for the function arguments you'll need to define in \code{...}.
 }

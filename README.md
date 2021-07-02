@@ -1,14 +1,15 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# simpow: Simulation-based power analysis for basic linear mixed models
+# simpow: Simulation-based power analysis
 
 <!-- badges: start -->
 <!-- badges: end -->
 
 The goal of this package is to provide helper functions for simple power
-analyses based on linear mixed models (LMM’s). (Support for generalized
-linear mixed models will be added in the future.)
+analyses based on linear and linear mixed models (LM’s and LMM’s).
+Support may be added for generalized linear mixed models (GLMM’s) in the
+future
 
 ## Installation
 
@@ -170,6 +171,50 @@ Similarly you can keep fitted models via `keep_models = TRUE` and
 extracting via `models`. (Not shown.) Other values you can extract from
 the returned object is the vector of p-values (`p.values`).
 
+## Simulated power for two-factor LM
+
+When using very few blocks it is not uncommon to treat the blocking
+variable as fixed instead of random. Instead of a basic LMM we’d want a
+two-factor linear model (LM) with no interaction. You can fit such a
+model in **simpow** using the `lm_2f()` function.
+
+The main difference from `lmm_f()` is that you provide the true
+treatment-block means instead of a block standard deviation.
+
+    set.seed(16)
+    lm_2f(nsim = 10,
+          allmeans = c(30, 40, 45, 55, 45, 55),
+          ntrt = 2,
+          nblock = 3,
+          sd_resid = 4)
+    #> Power analysis based on 10 simulations
+    #> 
+    #> Estimated power with alpha = 0.05: 40%
+    #> Total number replicates per treatment per block: 1 
+    #> Number treatments: 2 
+    #> Number blocks: 3 
+    #> Total observations in each dataset: 6
+
+You can provide vectors for the treatment means and block means
+separately instead of providing the combined means. However, the overall
+means between the two vectors must be the same and it may be simpler to
+provide `allmeans` as above.
+
+    set.seed(16)
+    lm_2f(nsim = 10,
+          ntrt = 2,
+          trtmeans = c(40, 50),
+          nblock = 3,
+          blockmeans = c(35, 50, 50),
+          sd_resid = 4)
+    #> Power analysis based on 10 simulations
+    #> 
+    #> Estimated power with alpha = 0.05: 40%
+    #> Total number replicates per treatment per block: 1 
+    #> Number treatments: 2 
+    #> Number blocks: 3 
+    #> Total observations in each dataset: 6
+
 ## Power when varying parameters or design elements
 
 You can use the `vary_element()` to run a power analysis for different
@@ -188,12 +233,26 @@ arguments constant for the power analysis. I unrealistically do only 10
 simulations to save running time.
 
     set.seed(16)
-    vary_size(tovary = "nblock",
-              values = c(5, 15),
-              nsim = 10,
-              trtmeans = c(1, 2),
-              sd_block = 2,
-              sd_resid = 2)
+    vary_element(simfun = "lmm_f",
+                 tovary = "nblock",
+                 values = c(5, 15),
+                 nsim = 100,
+                 trtmeans = c(1, 2),
+                 sd_block = 2,
+                 sd_resid = 4)
     #>   ntrt nblock nrep total_samp sd_block sd_resid alpha power
-    #> 1    2      5    1         10        2        2  0.05     0
-    #> 2    2     15    1         30        2        2  0.05    20
+    #> 1    2      5    1         10        2        4  0.05     4
+    #> 2    2     15    1         30        2        4  0.05     7
+
+Change the `simfun` to explore a different simulation function.
+
+    set.seed(16)
+    vary_element(simfun = "lm_2f",
+                 tovary = "nrep",
+                 values = c(1, 10),
+                 nsim = 100,
+                 allmeans = c(30, 40, 45, 55, 45, 55),
+                 sd_resid = 4)
+    #>   ntrt nblock nrep total_samp sd_resid alpha power
+    #> 1    2      3    1          6        4  0.05    45
+    #> 2    2      3   10         60        4  0.05   100

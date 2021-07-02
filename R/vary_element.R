@@ -2,7 +2,7 @@
 #'
 #' This is a convenience function that allows the user to vary one parameter or design element and perform a simulated power analysis for each provided value. All other parameters/design elements will be held fixed for all simulations.
 #'
-#' @param simfun Character. The name of the function you want to use for the simulations. Currently can only be `"lmm_f"`.
+#' @param simfun Character. The name of the function you want to use for the simulations. Currently can only be `"lmm_f"` (the default) or `"lm_2f"`.
 #' @param tovary Character. The name of the argument for the study design element you'd like to allow to vary in the function you defined in `simfun`. At the moment only a single element can vary at any one time. Currently defaults to `"nrep"`.
 #' @param values Numeric vector. The values you want to use for the `tovary` argument. These will be looped over and a separate power analysis done for each provided value.
 #' @param ... Other arguments to the function you defined in `simfun`.
@@ -11,7 +11,7 @@
 #'
 #' @details This function is a simple wrapper around a loop to run through the values from your chosen parameter/design element and repeat the power analysis for each one. This is not a particularly efficient function, and you may want to use a different approach if exploring the power for a large number of values.
 #'
-#' @seealso [lmm_f()] for the function arguments you'll need to define in `...`.
+#' @seealso [lmm_f()] and [lm_2f()] for the function arguments you'll need to define in `...`.
 #'
 #' @export
 #'

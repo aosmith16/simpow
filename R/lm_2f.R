@@ -202,7 +202,7 @@ lm_2f = function(nsim = 1, test = "overall", alpha = 0.05,
     res$nrep = nrep
     res$truemeans = stats::setNames(allmeans, allnames)
 
-    res$truesd = sd_resid
+    res$truesd = list(sd_resid = sd_resid)
     if(keep_data) {
         res$data = alldat
     }
