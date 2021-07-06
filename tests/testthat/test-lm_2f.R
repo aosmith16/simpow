@@ -33,6 +33,13 @@ test_that("error if nonconstant variance sd vector length doesn't match num trt"
                  "You are allowing nonconstant variance")
 })
 
+test_that("mean to have constant variance", {
+    expect_error(lm_2f(nrep = 2,
+                       allmeans = c(30, 40, 45, 55, 45, 55),
+                       sd_resid = c(1, 100)),
+                 "You are allowing constant variance")
+})
+
 test_that("error if marginal means don't match", {
     expect_error(lm_2f(trtmeans = c(1, 1),
                        blockmeans = c(2, 2, 2),
@@ -129,12 +136,22 @@ test_that("get resid order to match dataset when nonconstant variance", {
 
     y = combeff + resid
 
+    set.seed(16)
+    res = lm_2f(test = "none",
+                allmeans = c(30, 40, 45, 55, 45, 55),
+                nrep = 2,
+                sd_resid = c(1, 100),
+                sd_eq = FALSE,
+                keep_data = TRUE)$data[[1]]$response
+
     expect_equal(resid, c(0.476413393493845, 1.09621619893093, -12.5379998377005, -144.422903512362,
                           1.14782929548965, -1.00595059489047, -46.8412042880619, 6.35626782142669,
                           1.0249725985369, 1.84718210064237, 57.3142017009185, 11.1933369409721))
     expect_equal(y, c(30.4764133934938, 31.0962161989309, 27.4620001622995, -104.422903512362,
                       46.1478292954897, 43.9940494051095, 8.1587957119381, 61.3562678214267,
                       46.0249725985369, 46.8471821006424, 112.314201700919, 66.1933369409721))
+
+    expect_equal(y, res)
     expect_equal(residorder$trt2, trt)
 })
 

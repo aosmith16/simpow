@@ -138,6 +138,12 @@ lm_2f = function(nsim = 1, test = "overall", alpha = 0.05,
              "Please provide a residual SD for each treatment group in sd_resid but no more.")
     }
 
+    if(sd_eq & length(sd_resid) > 1) {
+        stop(call. = FALSE,
+             "You are allowing constant variance among treatments but have provided >1 sd_resid.\n",
+             "Do you want sd_eq = FALSE?")
+    }
+
 
     if(nblock > 4) {
         rlang::inform("You have at least 5 blocks. Are you certain you want to treat them as fixed?",

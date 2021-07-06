@@ -11,12 +11,12 @@ vary_element(simfun = "lmm_f", tovary = "nrep", values, ...)
 
 \item{tovary}{Character. The name of the argument for the study design element you'd like to allow to vary in the function you defined in \code{simfun}. At the moment only a single element can vary at any one time. Currently defaults to \code{"nrep"}.}
 
-\item{values}{Numeric vector. The values you want to use for the \code{tovary} argument. These will be looped over and a separate power analysis done for each provided value.}
+\item{values}{Numeric vector or list of vectors. The values you want to use for the \code{tovary} argument. If \code{tovary} takes a single value per simulation, provide a numeric vector. If \code{tovary} takes a vector, provide a list of vectors. A separate power analysis done for each provided value or set of values in the vector or list.}
 
 \item{...}{Other arguments to the function you defined in \code{simfun}.}
 }
 \value{
-A data.frame with a row for each simulation done containing the study design information.
+A data.frame with a row for each simulation done containing the estimated power along with the study design information and true treatment means your defined.
 }
 \description{
 This is a convenience function that allows the user to vary one parameter or design element and perform a simulated power analysis for each provided value. All other parameters/design elements will be held fixed for all simulations.
@@ -43,8 +43,16 @@ vary_element(tovary = "nrep",
           sd_block = 2,
           sd_resid = 2)
 
+# Vary effect size by providing different treatment means
+vary_element(tovary = "trtmeans",
+          values = list(c(5, 15), c(5, 5)),
+          nsim = 10,
+          nblock = 5,
+          sd_block = 2,
+          sd_resid = 2)
+
 # Here is an example varying
-    # the residual standard deviations
+    # the overall residual standard deviations
 vary_element(tovary = "sd_resid",
           values = c(2, 10),
           nsim = 20,

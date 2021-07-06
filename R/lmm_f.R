@@ -110,6 +110,11 @@ lmm_f = function(nsim = 1, test = "overall", alpha = 0.05,
              "Please provide a residual SD for each treatment group in sd_resid but no more.")
     }
 
+    if(sd_eq & length(sd_resid) > 1) {
+        stop(call. = FALSE,
+             "You are allowing constant variance among treatments but have provided >1 sd_resid.\n",
+             "Do you want sd_eq = FALSE?")
+    }
 
     if(is.null(trtnames)) {
         trtnames = LETTERS[1:ntrt]

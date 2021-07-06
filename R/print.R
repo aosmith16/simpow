@@ -31,13 +31,14 @@ print.simpow = function(x, ...) {
 summary.simpow = function(object, ...) {
     # Note difficulty when sd_block or other is NULL; research better approach
     d1 = data.frame(ntrt = object[["ntrt"]],
-               nblock = object[["nblock"]],
-               nrep = object[["nrep"]],
-               total_samp = object[["ntrt"]]*object[["nblock"]]*object[["nrep"]],
-               sd_block = I(list(object[["truesd"]]$sd_block)),
-               sd_resid = object[["truesd"]]$sd_resid,
-               alpha = object[["alpha"]],
-               power = object[["power"]]*100)
+                    trtmeans = I(list(object[["truemeans"]])),
+                    nblock = object[["nblock"]],
+                    nrep = object[["nrep"]],
+                    total_samp = object[["ntrt"]]*object[["nblock"]]*object[["nrep"]],
+                    sd_block = I(list(object[["truesd"]]$sd_block)),
+                    sd_resid = object[["truesd"]]$sd_resid,
+                    alpha = object[["alpha"]],
+                    power = object[["power"]]*100)
     d1$sd_block = unlist(d1$sd_block)
     d1
 }

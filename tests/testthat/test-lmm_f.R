@@ -15,6 +15,13 @@ test_that("error if nonconstant variance sd vector length doesn't match num trt"
                  "You are allowing nonconstant variance")
 })
 
+test_that("mean to have constant variance", {
+    expect_error(lmm_f(trtmeans = c(1, 2),
+                       sd_block = 2,
+                       sd_resid = c(1, 100)),
+                 "You are allowing constant variance")
+})
+
 test_that("at least 3 blocking groups", {
     expect_error(lmm_f(ntrt = 2, trtmeans = c(1, 2),
                        nblock = 2, sd_resid = 2),

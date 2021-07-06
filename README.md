@@ -242,14 +242,30 @@ simulations to save running time.
                  trtmeans = c(1, 2),
                  sd_block = 2,
                  sd_resid = 4)
-    #>   ntrt nblock nrep total_samp sd_block sd_resid alpha power
-    #> 1    2      5    1         10        2        4  0.05     4
-    #> 2    2     15    1         30        2        4  0.05     7
+    #>   ntrt trtmeans nblock nrep total_samp sd_block sd_resid alpha power
+    #> 1    2     1, 2      5    1         10        2        4  0.05     4
+    #> 2    2     1, 2     15    1         30        2        4  0.05     7
+
+You can vary values to arguments that already take vectors by passing a
+list. For example, if you want to vary the treatment effect pass a list
+of vectors.
+
+    set.seed(16)
+    vary_element(simfun = "lmm_f",
+                 tovary = "trtmeans",
+                 values = list(c(1, 4), c(1, 10)),
+                 nsim = 100,
+                 nblock = 5,
+                 sd_block = 2,
+                 sd_resid = 4)
+    #>   ntrt trtmeans nblock nrep total_samp sd_block sd_resid alpha power
+    #> 1    2     1, 4      5    1         10        2        4  0.05    14
+    #> 2    2    1, 10      5    1         10        2        4  0.05    74
 
 Change the `simfun` to explore a different simulation function. For
 `lm_2f()` for limited-block-number designs this will probably be most
-useful for varying the number of replicates per treatment per block or
-residual standard deviation.
+useful for varying the number of replicates per treatment per block,
+residual standard deviation, or size of the effect of interest.
 
     set.seed(16)
     vary_element(simfun = "lm_2f",
@@ -258,9 +274,9 @@ residual standard deviation.
                  nsim = 100,
                  allmeans = c(30, 40, 45, 55, 45, 55),
                  sd_resid = 4)
-    #>   ntrt nblock nrep total_samp sd_resid alpha power
-    #> 1    2      3    1          6        4  0.05    45
-    #> 2    2      3   10         60        4  0.05   100
+    #>   ntrt     trtmeans nblock nrep total_samp sd_resid alpha power
+    #> 1    2 30, 40, ....      3    1          6        4  0.05    45
+    #> 2    2 30, 40, ....      3   10         60        4  0.05   100
 
 Note that in the `lm_wf()` case above, trying to vary the block number
 would add a complexity `var_element()` can’t handle because you would

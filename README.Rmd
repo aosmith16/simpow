@@ -162,7 +162,20 @@ vary_element(simfun = "lmm_f",
              sd_resid = 4)
 ```
 
-Change the `simfun` to explore  a different simulation function. For `lm_2f()` for limited-block-number designs this will probably be most useful for varying the number of replicates per treatment per block or residual standard deviation. 
+You can vary values to arguments that already take vectors by passing a list. For example, if you want to vary the treatment effect pass a list of vectors.
+
+```{r}
+set.seed(16)
+vary_element(simfun = "lmm_f",
+             tovary = "trtmeans",
+             values = list(c(1, 4), c(1, 10)),
+             nsim = 100,
+             nblock = 5,
+             sd_block = 2,
+             sd_resid = 4)
+```
+
+Change the `simfun` to explore  a different simulation function. For `lm_2f()` for limited-block-number designs this will probably be most useful for varying the number of replicates per treatment per block, residual standard deviation, or size of the effect of interest. 
 
 ```{r}
 set.seed(16)
